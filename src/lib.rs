@@ -8,7 +8,6 @@ pub fn add(left: usize, right: usize) -> usize {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use std::fs;
     use crate::counter_bloom_filter::CounterBloomFilter;
 

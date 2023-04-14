@@ -40,9 +40,7 @@ impl CounterBloomFilter {
     fn rebuild_bitarray(&mut self){
         for index in 0..self.size {
             let counter = self.get_counter(index);
-            if counter > 0 {
-                self.bit_array.set(index)
-            }
+            if counter > 0 { self.bit_array.set(index) }
         }
     }
 
@@ -78,9 +76,11 @@ impl CounterBloomFilter {
     }
 
     pub fn remove(&mut self, data: &[u8]) {
-        if self.contains(data) {
-            for i in 0..self.num_hash_functions {
-                let index = self.hash(data, i);
+        let hashes: Vec<usize> = (0..self.num_hash_functions)
+            .map(|i| self.hash(data, i)).collect();
+
+        if hashes.iter().all(|index| self.bit_array.get(*index)) {
+            for index in hashes {
                 let counter = self.get_counter(index);
                 self.set_counter(index, counter.saturating_sub(1));
                 if counter == 1 {
